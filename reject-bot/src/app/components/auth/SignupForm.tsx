@@ -9,7 +9,7 @@ interface SignupFormProps {
   onLoginClick: () => void;
 }
 
-export default function SignupForm({ onSuccess, onLoginClick }: SignupFormProps) {
+function SignupForm({ onSuccess, onLoginClick }: SignupFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -126,4 +126,6 @@ export default function SignupForm({ onSuccess, onLoginClick }: SignupFormProps)
       </div>
     </div>
   );
-} 
+}
+
+export default SignupForm; 
