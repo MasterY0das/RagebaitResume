@@ -1,0 +1,28 @@
+# Node modules
+node_modules
+
+# Environment variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dist folder
+dist
+
+# Keep uploads directory but ignore its contents
+uploads/*
+!uploads/.gitkeep
+
+# IDE files
+.vscode
+.idea
+
+# Miscellaneous
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local 
