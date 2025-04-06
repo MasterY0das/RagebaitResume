@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '../ui/Button';
 import { useRouter } from 'next/navigation';
-import { loginUser } from '@/app/utils/api';
+import { loginUser } from '../../utils/api';
 
 interface LoginFormProps {
   onSuccess: () => void;
@@ -23,18 +23,12 @@ export default function LoginForm({ onSuccess, onSignupClick }: LoginFormProps) 
 
     try {
       setIsLoading(true);
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await loginUser({ email, password });
 
-      const data = await response.json();
-
-      if (data.success) {
-        localStorage.setItem('token', data.token);
+      if (response.success) {
+        // Store the token in localStorage
+        localStorage.setItem('token', response.token);
+        // Redirect or update UI
         onSuccess();
       }
     } catch (err: any) {
@@ -125,4 +119,4 @@ export default function LoginForm({ onSuccess, onSignupClick }: LoginFormProps) 
       </div>
     </div>
   );
-}
+} 

@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '../ui/Button';
 import { supabase } from '../../../utils/supabase';
 
-export interface SignupFormProps {
+interface SignupFormProps {
   onSuccess: () => void;
   onLoginClick: () => void;
 }
 
-const SignupForm: React.FC<SignupFormProps> = ({ onSuccess, onLoginClick }) => {
+function SignupForm({ onSuccess, onLoginClick }: SignupFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -126,6 +126,6 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess, onLoginClick }) => {
       </div>
     </div>
   );
-};
+}
 
 export default SignupForm; 

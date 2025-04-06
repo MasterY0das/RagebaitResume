@@ -80,36 +80,54 @@ export async function analyzeResume(file: File, options: AnalyzeResumeOptions) {
     
     throw new Error('Failed to analyze resume');
   }
+}
+
+// Add getSavedResumes function
+/**
+ * Retrieves all saved resumes for the authenticated user
+ * 
+ * @returns Object containing success status and resume data
+ */
+export async function getSavedResumes() {
+  try {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+    
+    const response = await fetch(`${API_URL}/auth/me`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      let errorMessage = 'Failed to fetch saved resumes';
+      
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch (e) {
+        // If we can't parse the error JSON, just use the default message
+      }
+      
+      throw new Error(errorMessage);
+    }
+    
+    const data = await response.json();
+    
+    return {
+      success: true,
+      data: data.user?.savedResumes || []
+    };
+  } catch (error) {
+    console.error('Error fetching saved resumes:', error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Failed to fetch saved resumes'
+    };
+  }
 } 
-interface LoginParams {
-  email: string;
-  password: string;
-}
-
-interface LoginResponse {
-  success: boolean;
-  token: string;
-}
-
-export async function loginUser({ email, password }: LoginParams): Promise<LoginResponse> {
-  const response = await fetch(`${API_URL}/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email, password }),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || 'Login failed');
-  }
-
-  const data = await response.json();
-
-  if (!data.success || !data.token) {
-    throw new Error('Invalid login response');
-  }
-
-  return data;
-}
