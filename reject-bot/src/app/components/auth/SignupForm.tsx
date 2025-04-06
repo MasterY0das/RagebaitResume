@@ -1,50 +1,50 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from '../ui/Button';
 import { supabase } from '../../../utils/supabase';
-import { toast } from 'react-hot-toast';
 
 interface SignupFormProps {
-  onSuccess?: () => void;
-  onCancel?: () => void;
-  onLoginClick?: () => void;
+  onSuccess: () => void;
+  onLoginClick: () => void;
 }
 
-export default function SignupForm({ onSuccess, onCancel, onLoginClick }: SignupFormProps) {
+export default function SignupForm({ onSuccess, onLoginClick }: SignupFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
+      setError('Passwords do not match');
       return;
     }
     
     if (password.length < 6) {
-      toast.error('Password must be at least 6 characters');
+      setError('Password must be at least 6 characters');
       return;
     }
     
     setIsLoading(true);
     
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error: signupError } = await supabase.auth.signUp({
         email,
         password,
       });
       
-      if (error) {
-        throw error;
+      if (signupError) {
+        throw signupError;
       }
       
-      toast.success('Signup successful! Please check your email to confirm your account.');
-      if (onSuccess) onSuccess();
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to sign up');
+      onSuccess();
+    } catch (err: any) {
+      setError(err.message || 'Failed to sign up');
     } finally {
       setIsLoading(false);
     }
@@ -52,9 +52,15 @@ export default function SignupForm({ onSuccess, onCancel, onLoginClick }: Signup
 
   return (
     <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">Create an Account</h2>
+      <h2 className="text-2xl font-bold text-center mb-6">Create an Account</h2>
       
-      <form onSubmit={handleSignup} className="space-y-4">
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
+          {error}
+        </div>
+      )}
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
             Email
@@ -66,7 +72,6 @@ export default function SignupForm({ onSuccess, onCancel, onLoginClick }: Signup
             onChange={(e) => setEmail(e.target.value)}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="you@example.com"
           />
         </div>
         
@@ -81,7 +86,6 @@ export default function SignupForm({ onSuccess, onCancel, onLoginClick }: Signup
             onChange={(e) => setPassword(e.target.value)}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="At least 6 characters"
           />
         </div>
         
@@ -96,36 +100,24 @@ export default function SignupForm({ onSuccess, onCancel, onLoginClick }: Signup
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Confirm your password"
           />
         </div>
         
-        <div className="flex flex-col space-y-2">
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-          >
-            {isLoading ? 'Creating Account...' : 'Sign Up'}
-          </button>
-          
-          {(onCancel || onLoginClick) && (
-            <button
-              type="button"
-              onClick={onLoginClick || onCancel}
-              className="w-full py-2 px-4 text-blue-600 font-medium rounded-md hover:bg-blue-50"
-            >
-              Back to Login
-            </button>
-          )}
-        </div>
+        <Button 
+          type="submit" 
+          className="w-full py-2"
+          isLoading={isLoading}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Creating Account...' : 'Sign Up'}
+        </Button>
       </form>
       
       <div className="mt-4 text-center">
         <p className="text-sm text-gray-600">
           Already have an account?{' '}
           <button 
-            onClick={onLoginClick || onCancel} 
+            onClick={onLoginClick} 
             className="text-blue-600 hover:underline focus:outline-none"
           >
             Log in
