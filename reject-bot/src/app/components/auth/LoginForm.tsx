@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '../ui/Button';
 import { useRouter } from 'next/navigation';
-import { loginUser } from '../../utils/api';
+import { loginUser } from '@/app/utils/api';
 
 interface LoginFormProps {
   onSuccess: () => void;
