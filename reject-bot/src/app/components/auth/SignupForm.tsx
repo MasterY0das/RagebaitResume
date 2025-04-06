@@ -1,37 +1,50 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '../ui/Button';
-import { useRouter } from 'next/navigation';
+import { supabase } from '../../../utils/supabase';
 
-interface SignupFormProps {
+export interface SignupFormProps {
   onSuccess: () => void;
   onLoginClick: () => void;
 }
 
-export default function SignupForm({ onSuccess, onLoginClick }: SignupFormProps) {
+const SignupForm: React.FC<SignupFormProps> = ({ onSuccess, onLoginClick }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
+    
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-
+    
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    
+    setIsLoading(true);
+    
     try {
-      setIsLoading(true);
-      // TODO: Add actual signup API call
+      const { data, error: signupError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      
+      if (signupError) {
+        throw signupError;
+      }
+      
       onSuccess();
     } catch (err: any) {
-      setError(err.message || 'Signup failed');
+      setError(err.message || 'Failed to sign up');
     } finally {
       setIsLoading(false);
     }
@@ -39,7 +52,7 @@ export default function SignupForm({ onSuccess, onLoginClick }: SignupFormProps)
 
   return (
     <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
+      <h2 className="text-2xl font-bold text-center mb-6">Create an Account</h2>
       
       {error && (
         <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
@@ -53,11 +66,11 @@ export default function SignupForm({ onSuccess, onLoginClick }: SignupFormProps)
             Email
           </label>
           <input
-            type="email"
             id="email"
-            required
+            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -67,25 +80,25 @@ export default function SignupForm({ onSuccess, onLoginClick }: SignupFormProps)
             Password
           </label>
           <input
-            type="password"
             id="password"
-            required
+            type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
+        
         <div>
           <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
             Confirm Password
           </label>
           <input
-            type="password"
             id="confirmPassword"
-            required
+            type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -93,9 +106,10 @@ export default function SignupForm({ onSuccess, onLoginClick }: SignupFormProps)
         <Button 
           type="submit" 
           className="w-full py-2"
+          isLoading={isLoading}
           disabled={isLoading}
         >
-          {isLoading ? 'Signing up...' : 'Sign Up'}
+          {isLoading ? 'Creating Account...' : 'Sign Up'}
         </Button>
       </form>
       
@@ -112,4 +126,6 @@ export default function SignupForm({ onSuccess, onLoginClick }: SignupFormProps)
       </div>
     </div>
   );
-}
+};
+
+export default SignupForm; 
