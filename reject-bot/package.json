@@ -6,7 +6,7 @@
     "dev": "concurrently \"next dev --turbopack\" \"npm run dev:backend\"",
     "dev:frontend": "next dev --turbopack",
     "dev:backend": "cd backend && npm run dev",
-    "build": "next build",
+    "build": "node -r dotenv/config next build",
     "build:backend": "tsc -p tsconfig.server.json",
     "start": "next start",
     "lint": "next lint",

@@ -23,10 +23,18 @@ export default function LoginForm({ onSuccess, onSignupClick }: LoginFormProps) 
 
     try {
       setIsLoading(true);
-      const response = await loginUser({ email, password });
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-      if (response.success) {
-        localStorage.setItem('token', response.token);
+      const data = await response.json();
+
+      if (data.success) {
+        localStorage.setItem('token', data.token);
         onSuccess();
       }
     } catch (err: any) {
