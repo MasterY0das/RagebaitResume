@@ -81,3 +81,35 @@ export async function analyzeResume(file: File, options: AnalyzeResumeOptions) {
     throw new Error('Failed to analyze resume');
   }
 } 
+interface LoginParams {
+  email: string;
+  password: string;
+}
+
+interface LoginResponse {
+  success: boolean;
+  token: string;
+}
+
+export async function loginUser({ email, password }: LoginParams): Promise<LoginResponse> {
+  const response = await fetch(`${API_URL}/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Login failed');
+  }
+
+  const data = await response.json();
+
+  if (!data.success || !data.token) {
+    throw new Error('Invalid login response');
+  }
+
+  return data;
+}
