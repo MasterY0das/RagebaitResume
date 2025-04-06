@@ -26,9 +26,7 @@ export default function LoginForm({ onSuccess, onSignupClick }: LoginFormProps) 
       const response = await loginUser({ email, password });
 
       if (response.success) {
-        // Store the token in localStorage
         localStorage.setItem('token', response.token);
-        // Redirect or update UI
         onSuccess();
       }
     } catch (err: any) {
@@ -119,4 +117,4 @@ export default function LoginForm({ onSuccess, onSignupClick }: LoginFormProps) 
       </div>
     </div>
   );
-} 
+}
