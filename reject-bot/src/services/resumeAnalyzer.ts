@@ -1,4 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
 import { readFileSync } from 'fs';
 import pdfParse from 'pdf-parse';
 
