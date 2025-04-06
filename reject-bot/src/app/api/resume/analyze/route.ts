@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { analyzeResume } from '../../../../backend/src/services/resumeAnalyzer';
+import { analyzeResume } from '../../../../services/resumeAnalyzer';
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
 import { v4 as uuidv4 } from 'uuid';
