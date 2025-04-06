@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"next dev --turbopack\" \"npm run dev:backend\"",
     "dev:frontend": "next dev --turbopack",
     "dev:backend": "cd backend && npm run dev",
     "build": "next build",
+    "build:backend": "tsc -p tsconfig.server.json",
     "start": "next start",
     "lint": "next lint",
     "setup:supabase": "node scripts/setup-supabase.js"
