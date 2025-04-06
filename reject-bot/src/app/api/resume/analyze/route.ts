@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { analyzeResume } from '../../../../services/resumeAnalyzer';
+import { writeFile } from 'fs/promises';
+import { join } from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,16 +19,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Read the file content directly
+    // Read the file content
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Get the file extension
-    const fileName = file.name.toLowerCase();
-    
-    // Pass the buffer directly to the resume analyzer
+    // Create a unique filename
+    const tempDir = 'temp';
+    const filename = `${uuidv4()}-${file.name}`;
+    const tempFilePath = join(process.cwd(), tempDir, filename);
+
+    // Ensure directory exists
+    await writeFile(tempFilePath, buffer);
+
+    // Analyze the resume with job info
     const result = await analyzeResume(
-      buffer, 
+      tempFilePath, 
       roastIntensity,
       {
         jobPosition,

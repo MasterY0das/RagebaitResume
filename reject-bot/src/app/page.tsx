@@ -11,6 +11,7 @@ import SplashScreen from './components/SplashScreen';
 import { Header } from './components/ui/Header';
 import { supabase } from '../utils/supabase';
 import { saveResumeAnalysis } from '../utils/supabaseService';
+import Link from 'next/link';
 
 // Define the application states
 type AppState = 'splash' | 'landing' | 'upload' | 'context' | 'settings' | 'loading' | 'result';
