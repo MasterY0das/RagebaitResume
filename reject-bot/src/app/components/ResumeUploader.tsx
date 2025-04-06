@@ -4,8 +4,15 @@ import { useState, useRef, ChangeEvent, DragEvent } from 'react';
 import { Button } from './ui/Button';
 import { toast } from 'react-hot-toast';
 
+interface FileWithMetadata {
+  file: File;
+  name: string;
+  size: number;
+  type: string;
+}
+
 interface ResumeUploaderProps {
-  onUpload: (file: File) => void;
+  onUpload: (fileData: FileWithMetadata) => void;
 }
 
 export const ResumeUploader = ({ onUpload }: ResumeUploaderProps) => {
@@ -63,7 +70,12 @@ export const ResumeUploader = ({ onUpload }: ResumeUploaderProps) => {
       toast.error('Please select a file first');
       return;
     }
-    onUpload(selectedFile);
+    onUpload({
+      file: selectedFile,
+      name: selectedFile.name,
+      size: selectedFile.size,
+      type: selectedFile.type
+    });
   };
 
   const triggerFileInput = () => {

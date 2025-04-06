@@ -18,7 +18,7 @@ type AppState = 'splash' | 'landing' | 'upload' | 'context' | 'settings' | 'load
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('splash');
-  const [file, setFile] = useState<File | null>(null);
+  const [fileData, setFileData] = useState<{file: File, name: string, size: number, type: string} | null>(null);
   const [roastIntensity, setRoastIntensity] = useState<'mild' | 'medium' | 'savage'>('medium');
   const [roastResult, setRoastResult] = useState<any>(null);
   const [jobPosition, setJobPosition] = useState<string>('');
@@ -37,8 +37,8 @@ export default function Home() {
     setAppState('landing');
   };
 
-  const handleUpload = (file: File) => {
-    setFile(file);
+  const handleUpload = (fileData: { file: File, name: string, size: number, type: string }) => {
+    setFileData(fileData);
     setAppState('context');
   };
 
@@ -61,7 +61,7 @@ export default function Home() {
     try {
       // Create form data to send the file
       const formData = new FormData();
-      formData.append('file', file as Blob);
+      formData.append('file', fileData?.file as Blob);
       formData.append('roastIntensity', intensity);
       
       // Add job context if provided
@@ -100,7 +100,7 @@ export default function Home() {
         try {
           await saveResumeAnalysis({
             user_id: session.user.id,
-            resume_name: file?.name || 'Unnamed Resume',
+            resume_name: fileData?.name || 'Unnamed Resume',
             job_position: jobPosition,
             job_field: jobField,
             intensity: intensity,
@@ -122,7 +122,7 @@ export default function Home() {
   };
 
   const handleTryAgain = () => {
-    setFile(null);
+    setFileData(null);
     setRoastResult(null);
     setJobPosition('');
     setJobField('');
