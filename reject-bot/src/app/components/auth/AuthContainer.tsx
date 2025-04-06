@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import LoginForm from './LoginForm';
-// Import SignupForm with a different name to avoid conflicts
-import CustomSignupForm from './SignupForm';
+// Use the new component instead
+import SignUpComponent from './SignUpComponent';
 
 interface AuthContainerProps {
   onAuthSuccess: () => void;
@@ -20,7 +20,7 @@ export default function AuthContainer({ onAuthSuccess }: AuthContainerProps) {
           onSignupClick={() => setShowLogin(false)} 
         />
       ) : (
-        <CustomSignupForm 
+        <SignUpComponent 
           onSuccess={onAuthSuccess} 
           onLoginClick={() => setShowLogin(true)} 
         />
