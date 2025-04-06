@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev --turbopack\" \"npm run dev:backend\"",
+    "dev": "next dev",
     "dev:frontend": "next dev --turbopack",
     "dev:backend": "cd backend && npm run dev",
     "build": "next build",
